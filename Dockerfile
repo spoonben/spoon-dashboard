@@ -1,14 +1,15 @@
-FROM ubuntu
-MAINTAINER Ben Spoon
+FROM node:argon
 
-RUN apt-get install -y software-properties-common python
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ precise universe" >> /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install -y nodejs
-#RUN apt-get install -y nodejs=0.6.12~dfsg1-1ubuntu1
-RUN mkdir /var/www
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-ADD app.js /var/www/app.js
+# Install app dependencies
+COPY package.json /usr/src/app/
+RUN npm install
 
-CMD ["/usr/bin/node", "/var/www/app.js"] 
+# Bundle app source
+COPY . /usr/src/app
+
+EXPOSE 8080
+CMD [ "npm", "start" ]
